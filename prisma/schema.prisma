@@ -1,0 +1,59 @@
+// Prisma schema for Lista Fácil
+// See: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id              String       @id @default(uuid())
+  email           String       @unique
+  password        String
+  lists           ListMember[]
+  invitesReceived Invite[]     @relation("InviteRecipient")
+  invitesSent     Invite[]     @relation("InviteInviter")
+}
+
+model List {
+  id          String   @id @default(uuid())
+  title       String
+  items       Item[]
+  members     ListMember[]
+  invites     Invite[]
+}
+
+model ListMember {
+  userId String
+  listId String
+  user   User @relation(fields: [userId], references: [id])
+  list   List @relation(fields: [listId], references: [id])
+  @@id([userId, listId])
+}
+
+model Item {
+  id        String   @id @default(uuid())
+  content   String
+  checked   Boolean  @default(false)
+  listId    String
+  list      List     @relation(fields: [listId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model Invite {
+  id         String   @id @default(uuid())
+  email      String
+  listId     String
+  list       List     @relation(fields: [listId], references: [id])
+
+  userId     String?  
+  user       User?    @relation("InviteRecipient", fields: [userId], references: [id])
+
+  inviterId  String   
+  inviter    User     @relation("InviteInviter", fields: [inviterId], references: [id])
+
+  createdAt  DateTime @default(now())
+}

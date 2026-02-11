@@ -1,6 +1,7 @@
-import { BadRequestException, Body, Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Patch, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
 
 @Controller('users')
@@ -15,10 +16,21 @@ export class UsersController {
   @UseGuards(AuthGuard('jwt'))
   @Get('me')
   getProfile(@Request() req) {
-    const id = req.user?.userId ?? req.user?.sub ?? req.user?.id ?? req.user?.user?.id;
+    const id = req.user?.userId
     if (!id) {
       throw new BadRequestException('user id missing from token');
     }
     return this.usersService.findById(id);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Patch('me')
+  updateProfile(@Request() req, @Body() updateUserDto: UpdateUserDto) {
+    const id = req.user?.userId
+    if (!id) {
+      throw new BadRequestException('user id missing from token');
+    }
+    
+    return this.usersService.update(id, updateUserDto);
   }
 }

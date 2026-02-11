@@ -58,4 +58,15 @@ export class ListsService {
 
     return this.prisma.list.update({ where: { id }, data: { ...update } });
   }
+
+  async remove(id: string, userId: string) {
+    const list = await this.prisma.list.findUnique({ where: { id }, include: { members: true } });
+    if (!list) throw new NotFoundException('Lista não encontrada');
+
+    const isMember = list.members.some((member) => member.userId === userId);
+    if (!isMember) throw new ForbiddenException('Você não tem permissão para deletar esta lista');
+
+    await this.prisma.list.delete({ where: { id } });
+    return { message: 'Lista deletada com sucesso' };
+  }
 }

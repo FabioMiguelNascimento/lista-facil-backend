@@ -31,8 +31,8 @@ model List {
 model ListMember {
   userId String
   listId String
-  user   User @relation(fields: [userId], references: [id])
-  list   List @relation(fields: [listId], references: [id])
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  list   List @relation(fields: [listId], references: [id], onDelete: Cascade)
   @@id([userId, listId])
 }
 
@@ -41,7 +41,7 @@ model Item {
   content   String
   checked   Boolean  @default(false)
   listId    String
-  list      List     @relation(fields: [listId], references: [id])
+  list      List     @relation(fields: [listId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
 }
 
@@ -49,7 +49,7 @@ model Invite {
   id         String   @id @default(uuid())
   email      String
   listId     String
-  list       List     @relation(fields: [listId], references: [id])
+  list       List     @relation(fields: [listId], references: [id], onDelete: Cascade)
 
   userId     String?  
   user       User?    @relation("InviteRecipient", fields: [userId], references: [id])

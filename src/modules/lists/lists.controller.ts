@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { CreateListDto } from './dto/create-list.dto';
 import { UpdateListDto } from './dto/update-list.dto';
@@ -27,5 +27,10 @@ export class ListsController {
   @Patch(':id')
   update(@Request() req, @Param('id') id: string, @Body() updateListDto: UpdateListDto) {
     return this.listsService.update(id, req.user.userId, updateListDto as any);
+  }
+
+  @Delete(':id')
+  remove(@Request() req, @Param('id') id: string) {
+    return this.listsService.remove(id, req.user.userId);
   }
 }

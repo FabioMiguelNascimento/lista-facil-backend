@@ -21,6 +21,7 @@ model User {
 model List {
   id          String   @id @default(uuid())
   title       String
+  icon        String?  @default("list")
   items       Item[]
   members     ListMember[]
   invites     Invite[]

@@ -1,10 +1,10 @@
 import {
-  WebSocketGateway,
-  WebSocketServer,
-  SubscribeMessage,
-  MessageBody,
-  ConnectedSocket,
-  OnGatewayConnection,
+    ConnectedSocket,
+    MessageBody,
+    OnGatewayConnection,
+    SubscribeMessage,
+    WebSocketGateway,
+    WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
@@ -24,7 +24,6 @@ export class ListGateway implements OnGatewayConnection {
       client.disconnect();
       return;
     }
-    console.log(`Usuário conectado: ${client.id}`);
   }
 
   @SubscribeMessage('join_list')
@@ -47,7 +46,6 @@ export class ListGateway implements OnGatewayConnection {
   handleIdentify(@MessageBody() data: { userId: string }, @ConnectedSocket() client: Socket) {
     // In production validate userId against token
     client.join(`user_${data.userId}`);
-    console.log(`Socket ${client.id} joined personal room user_${data.userId}`);
   }
 
   sendListUpdate(listId: string, event: string, payload: any) {

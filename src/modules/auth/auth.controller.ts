@@ -16,7 +16,9 @@ export class AuthController {
 
   @Post('login')
   async login(@Body() loginDto: LoginDto, @Res({ passthrough: true }) response: Response) {
-    const { access_token } = await this.authService.login(loginDto);
+    // Valida credenciais e obtém usuário (com id) antes de gerar o token
+    const user = await this.authService.validateUser(loginDto.email, loginDto.password);
+    const { access_token } = await this.authService.login(user);
 
     response.cookie('access_token', access_token, this.cookiesOptions);
 

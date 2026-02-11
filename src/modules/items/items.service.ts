@@ -1,6 +1,6 @@
-import { Injectable, ForbiddenException, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { ListGateway } from '../../gateways/list/list.gateway';
+import { PrismaService } from '../../prisma/prisma.service';
 import { CreateItemDto } from './dto/create-item.dto'; // DTO: content, listId
 import { UpdateItemDto } from './dto/update-item.dto'; // DTO: checked, content
 
@@ -32,7 +32,7 @@ export class ItemsService {
     });
 
     // Notifica via WebSocket: "Alguém adicionou um item!"
-    this.listGateway.sendListUpdate(createItemDto.listId, 'item_created', newItem);
+    await this.listGateway.sendListUpdate(createItemDto.listId, 'item_created', newItem);
 
     return newItem;
   }
@@ -52,7 +52,7 @@ export class ItemsService {
     });
 
     // Notifica via WebSocket: "Alguém riscou/editou um item!"
-    this.listGateway.sendListUpdate(item.listId, 'item_updated', updatedItem);
+    await this.listGateway.sendListUpdate(item.listId, 'item_updated', updatedItem);
 
     return updatedItem;
   }
@@ -66,7 +66,7 @@ export class ItemsService {
     await this.prisma.item.delete({ where: { id } });
 
     // Notifica via WebSocket: "Alguém removeu um item!"
-    this.listGateway.sendListUpdate(item.listId, 'item_deleted', { id });
+    await this.listGateway.sendListUpdate(item.listId, 'item_deleted', { id });
 
     return { message: 'Item removido' };
   }

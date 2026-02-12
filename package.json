@@ -6,8 +6,8 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "npx prisma generate && nest build",
-    "start": "node dist/main",
+    "build": "pnpm prisma generate && nest build",
+    "start": "node dist/src/main",
     "start:dev": "nest start --watch",
     "format": "prettier --write \"src/**/*.ts\"",
     "start:debug": "nest start --debug --watch",

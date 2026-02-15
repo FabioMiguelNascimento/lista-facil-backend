@@ -28,6 +28,7 @@ export class ListsService {
       },
       include: {
         _count: { select: { items: true, members: true } },
+        members: { include: { user: { select: { id: true, email: true, avatarUrl: true } } } },
       },
     });
   }

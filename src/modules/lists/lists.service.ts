@@ -36,7 +36,7 @@ export class ListsService {
     const list = await this.prisma.list.findUnique({
       where: { id },
       include: { 
-        items: { orderBy: { createdAt: 'asc' } },
+        items: { orderBy: { createdAt: 'asc' }, include: { owner: { select: { id: true, email: true, avatarUrl: true } } } },
         members: { include: { user: { select: { email: true, id: true } } } } 
       },
     });

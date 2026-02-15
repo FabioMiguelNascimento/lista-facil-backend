@@ -28,7 +28,9 @@ export class ItemsService {
       data: {
         content: createItemDto.content,
         listId: createItemDto.listId,
+        ownerId: userId, // vincula o criador ao item
       },
+      include: { owner: { select: { id: true, email: true, avatarUrl: true } } },
     });
 
     // Notifica via WebSocket: "Alguém adicionou um item!"
@@ -49,6 +51,7 @@ export class ItemsService {
     const updatedItem = await this.prisma.item.update({
       where: { id },
       data: updateItemDto,
+      include: { owner: { select: { id: true, email: true, avatarUrl: true } } },
     });
 
     // Notifica via WebSocket: "Alguém riscou/editou um item!"

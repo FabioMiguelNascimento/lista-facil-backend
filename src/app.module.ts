@@ -10,6 +10,6 @@ import { ItemsModule } from './modules/items/items.module';
 @Module({
   imports: [AuthModule, ListsModule, InvitesModule, PrismaModule, UsersModule, ItemsModule],
   controllers: [],
-  providers: [ ListGateway],
+  providers: [],
 })
 export class AppModule {}

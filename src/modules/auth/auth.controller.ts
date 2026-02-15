@@ -7,16 +7,21 @@ import { LoginDto } from './dto/login.dto';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
-  private readonly cookiesOptions: CookieOptions = {
+  private readonly cookiesOptions: CookieOptions = (() => {
+    const frontend = process.env.FRONTEND_URL ?? '';
+    const crossSiteNeeded =
+      process.env.NODE_ENV === 'production' || (frontend && !frontend.includes('localhost'));
+
+    return {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      secure: crossSiteNeeded,
+      sameSite: crossSiteNeeded ? 'none' : 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000,
-  }
+    } as CookieOptions;
+  })();
 
   @Post('login')
   async login(@Body() loginDto: LoginDto, @Res({ passthrough: true }) response: Response) {
-    // Valida credenciais e obtém usuário (com id) antes de gerar o token
     const user = await this.authService.validateUser(loginDto.email, loginDto.password);
     const { access_token } = await this.authService.login(user);
 

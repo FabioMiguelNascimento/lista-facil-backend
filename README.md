@@ -1,113 +1,88 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Lista Fácil — API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+API backend da aplicação **Lista Fácil**. Implementada com NestJS + TypeScript e usando Prisma como ORM. Preparada para execução local (Docker + pnpm) e deploy (Zeabur, outros).
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Tecnologias
 
-## Description
+- Node.js, TypeScript
+- Framework: NestJS
+- ORM: Prisma (PostgreSQL)
+- Banco: PostgreSQL (docker-compose disponível)
+- Deploy: Zeabur (ex.: DATABASE_URL no ambiente)
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+---
 
-## Project setup
+## Como rodar localmente
+
+1. Clone o repositório:
 
 ```bash
-$ pnpm install
+git clone https://github.com/FabioMiguelNascimento/lista-facil-backend.git
+cd lista-facil-backend
 ```
 
-**Docker Compose (Postgres + backend)**
-
-- The `docker-compose.yml` file is in this folder. To start services:
+2. Instale dependências:
 
 ```bash
-# from this folder
+pnpm install
+```
+
+3. Variáveis de ambiente
+
+Crie um arquivo `.env` na raiz (exemplos já existem no repositório). variáveis importantes:
+
+```env
+PORT=8080
+DATABASE_URL="postgresql://user:password@localhost:55432/lista_facil?schema=public"
+FRONTEND_URL="http://localhost:3000"
+JWT_SECRET="sua-chave-secreta-aqui"
+```
+
+4. (Opcional) Inicie Postgres via Docker Compose:
+
+```bash
 docker-compose up -d --build
 ```
 
-- After the database starts, run Prisma migrations:
+5. Rode migrações do Prisma e gere client:
 
 ```bash
 pnpm exec prisma migrate dev --name init
+pnpm exec prisma generate
 ```
 
-## Compile and run the project
+6. Inicie a aplicação (desenvolvimento):
 
 ```bash
-# development
-$ pnpm run start
-
-# watch mode
-$ pnpm run start:dev
-
-# production mode
-$ pnpm run start:prod
+pnpm run start:dev
 ```
 
-## Run tests
+A API usa a variável `PORT` (padrão no `.env` deste projeto: `8080`) e habilita CORS apenas para `FRONTEND_URL`.
 
-```bash
-# unit tests
-$ pnpm run test
+---
 
-# e2e tests
-$ pnpm run test:e2e
+## Scripts principais
 
-# test coverage
-$ pnpm run test:cov
-```
+- `pnpm run start:dev` — iniciar em modo watch (desenvolvimento)
+- `pnpm run start` — iniciar (Nest)
+- `pnpm run build` — compilar para produção
+- `pnpm run start:prod` — executar build compilado
+- `pnpm run lint` / `pnpm run format` — lint/format
 
-## Deployment
+---
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+## Docker / Deploy
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+- `docker-compose.yml` inclui um container PostgreSQL usado em desenvolvimento.
+- Para deploy em Zeabur: configure `DATABASE_URL` e `JWT_SECRET` nas variáveis de ambiente da plataforma; a aplicação lê `PORT` e `FRONTEND_URL` do ambiente.
 
-```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
-```
+---
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+## Observações úteis
 
-## Resources
+- Prisma schema: `prisma/schema.prisma` (provider: postgresql).
+- Endpoints e DTOs estão em `src/modules/*`.
 
-Check out a few resources that may come in handy when working with NestJS:
+---
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Se quiser, eu atualizo também o README do frontend para alinhar instruções (já incluso neste repositório).
